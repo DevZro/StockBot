@@ -21,9 +21,9 @@ if weekday >= 5:  # Saturday=5, Sunday=6
     print("Market closed on weekend. Exiting.")
     exit()
 
-"""if now.time() < market_close:
+if now.time() < market_close:
     print("Market has not closed yet. Exiting.")
-    exit()"""
+    exit()
 
 # Load existing historical data
 df = pd.read_parquet("data.parquet")

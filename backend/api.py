@@ -79,7 +79,7 @@ def get_latest_row():
         "correct_buys": correct_buys,
         "win_percent": win_percent,
         "next_date": next_market_day,
-        "buy_signal": True,
+        "buy_signal": signal,
         "last_month_dates": dates,
         "last_month_close": close
     }
