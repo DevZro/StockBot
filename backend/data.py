@@ -1,11 +1,10 @@
 from alpha_vantage.timeseries import TimeSeries
 from dotenv import load_dotenv
 import os
-
+import json
 
 load_dotenv()
 API_KEY = os.getenv("ALPHA_VANTAGE_KEY")
-
 
 ts = TimeSeries(key=API_KEY, output_format='pandas')
 data, meta = ts.get_daily(symbol="SPY", outputsize="full")

@@ -2,7 +2,7 @@ import pandas as pd
 import joblib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+import json
 
 app = FastAPI()
 
@@ -19,23 +19,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load model once at startup (efficient)
-model = joblib.load("model.pkl")
 
 # Load the dataset
 def load_data():
     return pd.read_parquet("data.parquet")
 
-predictors = [
-    'Close_Ratio_2', 'Trend_2',
-    'Close_Ratio_5', 'Trend_5',
-    'Close_Ratio_20', 'Trend_20',
-    'Close_Ratio_60', 'Trend_60',
-    'Close_Ratio_250', 'Trend_250'
-]
-
-threshold = 0.675 
-
+def load_json():
+    with open("stats.json", "r") as file:
+        stats = json.load(file)
+    return stats
 
 @app.get("/")
 def home():
@@ -51,7 +43,8 @@ def get_latest_row():
     """
     df = load_data()
 
-    
+    stats = load_json()
+
     # Last 30 days
     last_30 = df.tail(30)
     
@@ -61,16 +54,14 @@ def get_latest_row():
     latest = df.iloc[-1]
     
     # Example statistics (replace with your actual logic)
-    total_buys = 0
-    correct_buys = 0
-    win_percent = 0
-    
-    # Make input 2D for sklearn
-    X = (latest.to_frame().T)[predictors]
+    total_buys = stats["total_buys"]
+    correct_buys = stats["correct_buys"]
+    try:
+        win_percent = correct_buys / total_buys
+    except ZeroDivisionError: # takes care of 0/0 case
+        win_percent = 0
+    signal = stats["last_prediction"] 
 
-    # Prediction probability for class 1
-    pred_prob = model.predict_proba(X)[0, 1]
-    signal = bool(pred_prob > threshold)
 
     next_market_day = (latest.name + pd.tseries.offsets.BDay(1)).strftime("%Y-%m-%d")  
     
@@ -82,27 +73,4 @@ def get_latest_row():
         "buy_signal": signal,
         "last_month_dates": dates,
         "last_month_close": close
-    }
-
-
-
-@app.get("/predict")
-def predict():
-    """
-    Returns the model's prediction probability
-    and buy/no-buy signal.
-    """
-    df = load_data()
-    latest = df.iloc[-1]
-
-    # Make input 2D for sklearn
-    X = (latest.to_frame().T)[predictors]
-
-    # Prediction probability for class 1
-    pred_prob = model.predict_proba(X)[0, 1]
-    signal = "BUY" if pred_prob > threshold else "NO BUY"
-
-    return {
-        "prediction_probability": pred_prob,
-        "signal": signal
     }
