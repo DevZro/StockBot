@@ -66,8 +66,8 @@ def get_latest_row():
     next_market_day = (latest.name + pd.tseries.offsets.BDay(1)).strftime("%Y-%m-%d")  
     
     return {
-        "total_buys": 10,
-        "correct_buys": 10,
+        "total_buys": total_buys,
+        "correct_buys": correct_buys,
         "win_percent": win_percent,
         "next_date": next_market_day,
         "buy_signal": signal,
