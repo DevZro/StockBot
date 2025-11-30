@@ -29,7 +29,7 @@ def load_json():
         stats = json.load(file)
     return stats
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 def home():
     return {"status": "API is running"}
 
