@@ -75,7 +75,7 @@ def get_latest_row():
         "last_month_close": close
     }
 
-@app.get("/update-daily")
+@app.post("/update-daily")
 def update_daily():
     """
     Runs the daily update logic (same as daily.py):
