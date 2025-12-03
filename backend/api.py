@@ -31,7 +31,7 @@ def load_json():
 
 @app.api_route("/", methods=["GET", "HEAD"])
 def home():
-    return {"status": "API is running"}
+    return load_json()
 
 
 
@@ -75,7 +75,7 @@ def get_latest_row():
         "last_month_close": close
     }
 
-@app.post("/update-daily")
+@app.api_route("/update-daily", methods=["GET", "POST", "HEAD"])
 def update_daily():
     """
     Runs the daily update logic (same as daily.py):
@@ -105,8 +105,8 @@ def update_daily():
 
         # Load current data and stats
         df = pd.read_parquet("data.parquet")
-        with open("stats.json", "r") as f:
-            stats = json.load(f)
+
+        stats = load_json()
 
         # Fetch latest market data
         ts = TimeSeries(key=API_KEY, output_format='pandas')
@@ -166,6 +166,8 @@ def update_daily():
 
         # Update last prediction
         stats["last_prediction"] = signal
+
+        stats["dates"] = df.index.strftime("%Y-%m-%d").tolist()[-30:]
 
         # === SAVE EVERYTHING ===
         df.to_parquet("data.parquet")
