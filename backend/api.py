@@ -31,7 +31,7 @@ def load_json():
 
 @app.api_route("/", methods=["GET", "HEAD"])
 def home():
-    return load_json()
+    return {"message": "StockBot API is running."}
 
 
 
@@ -166,8 +166,6 @@ def update_daily():
 
         # Update last prediction
         stats["last_prediction"] = signal
-
-        stats["dates"] = df.index.strftime("%Y-%m-%d").tolist()[-30:]
 
         # === SAVE EVERYTHING ===
         df.to_parquet("data.parquet")

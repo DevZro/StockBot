@@ -59,8 +59,6 @@ for i in range(1, -1, -1):
         
     stats["last_prediction"] = signal
 
-    stats["dates"] = df.index.strftime("%Y-%m-%d").tolist()[-30:]
-
 with open("stats.json", "w") as f:
     stats = json.dump(stats, f, indent=4)
 
