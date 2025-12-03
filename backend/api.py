@@ -56,10 +56,7 @@ def get_latest_row():
     # Example statistics (replace with your actual logic)
     total_buys = stats["total_buys"]
     correct_buys = stats["correct_buys"]
-    try:
-        win_percent = correct_buys / total_buys
-    except ZeroDivisionError: # takes care of 0/0 case
-        win_percent = 0
+    win_percent = (correct_buys / total_buys) * 100 if total_buys > 0 else 0
     signal = stats["last_prediction"] 
 
 
